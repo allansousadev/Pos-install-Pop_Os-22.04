@@ -218,3 +218,4 @@ sudo apt autoremove -y
 
 echo "Fim da instalação"
 echo "================================================================"
+clear
