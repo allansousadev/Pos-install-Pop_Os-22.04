@@ -5,7 +5,7 @@
 #
 #
 # Nome do programa: Pós install Pop!_OS 22.04
-# Versão: 0.2
+# Versão: 0.3
 # Descriição: Pós instalação Pop!_OS em 2023
 #
 # CHANGELOG:
@@ -16,8 +16,6 @@ echo "================================================================"
 sudo apt update -y
 
 sudo apt upgrade -y
-
-VSCODE="https://code.visualstudio.com/docs/?dv=linux64_deb"
 
 echo "Instalando Aplicações"
 echo "================================================================"
@@ -37,6 +35,7 @@ exa
 fish
 curl
 wget
+tldr
 )
 
 # Instalar programas no apt
@@ -48,28 +47,28 @@ for nome_do_programa in ${PROGRAMAS_PARA_INSTALAR[@]}; do
   fi
 done
 
-echo "Definindo zsh como shell padrão"
+echo "Instalação Brave"
 echo "================================================================"
-chsh -s $(which zsh)
-
-echo "Instalação Oh-My-Zsh"
-echo "================================================================"
-sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
-clear
-
-echo "Power-level-10k"
-echo "================================================================"
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
-echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
+sudo apt install curl
+sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+sudo apt update
+sudo apt install brave-browser
 
 echo "Instalação Lammp Server"
 echo "================================================================"
-sudo apt update -y
-sudo apt install apache2 -y
+sudo apt install lamp-server^ -y
 
-sudo apt install mysql-server -y
-sudo apt install php libapache2-mod-php php-mysql -y
-
+echo "Instalação Vscode"
+echo "================================================================"
+sudo apt-get install wget gpg
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+rm -f packages.microsoft.gpg
+sudo apt install apt-transport-https
+sudo apt update
+sudo apt install code -y
 
 echo "Instalação Repósitorio Flatpak"
 echo "================================================================"
@@ -80,12 +79,6 @@ echo "================================================================"
 echo "Remmina"
 echo "================================================================"
 flatpak install flathub org.remmina.Remmina -y
-echo "Thunderbird"
-echo "================================================================"
-flatpak install flathub org.mozilla.Thunderbird -y
-echo "Chromium Web Browser"
-echo "================================================================"
-flatpak install flathub org.chromium.Chromium -y
 echo "Lutris"
 echo "================================================================"
 flatpak install flathub net.lutris.Lutris -y
@@ -98,7 +91,7 @@ flatpak install flathub com.microsoft.Edge -y
 echo "VLC"
 echo "================================================================"
 flatpak install flathub org.videolan.VLC -y
-echo "GNU Image Manipulation Program"
+echo "Gimp"
 echo "================================================================"
 flatpak install flathub org.gimp.GIMP -y
 echo "ONLYOFFICE Desktop Editors"
@@ -128,9 +121,6 @@ flatpak install flathub com.getpostman.Postman -y
 echo "DBeaver Community"
 echo "================================================================"
 flatpak install flathub io.dbeaver.DBeaverCommunity -y
-echo "Beekeeper Studio"
-echo "================================================================"
-flatpak install flathub io.beekeeperstudio.Studio -y
 echo "Flameshot"
 echo "================================================================"
 flatpak install flathub org.flameshot.Flameshot -y
@@ -140,32 +130,18 @@ flatpak install flathub com.google.Chrome -y
 echo "Hidamari"
 echo "================================================================"
 flatpak install flathub io.github.jeffshee.Hidamari -y
-
-echo "Instalação ASDF"
+echo "Obs Studio"
 echo "================================================================"
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
-echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
-
-asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-asdf install nodejs latest
-asdf global nodejs latest
-
-echo "Instalação syntax-highlighting"
+flatpak install flathub com.obsproject.Studio -y
+echo "Obsidian"
 echo "================================================================"
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
-
-#Descomente a linha abaixo
-echo "source ${(q-)PWD}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME} /.zshrc
-
-echo "Instalação zsh-autosuggestions"
+flatpak install flathub md.obsidian.Obsidian -y
+echo "Steam"
 echo "================================================================"
-git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-clear
-
-echo "Instalação fzf"
+flatpak install flathub com.valvesoftware.Steam -y
+echo "PCSX2"
 echo "================================================================"
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
+flatpak install flathub net.pcsx2.PCSX2 -y
 
 echo "Instalação Docker"
 echo "================================================================"
@@ -207,6 +183,46 @@ curl -s https://laravel.build/example-app | bash
 cd example-app
  
 ./vendor/bin/sail up
+
+echo "Instalação Oh-My-Zsh"
+echo "================================================================"
+sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+clear
+
+echo "Definindo zsh como shell padrão"
+echo "================================================================"
+chsh -s $(which zsh)
+
+# echo "Power-level-10k"
+# echo "================================================================"
+# git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+# echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
+
+# echo "Instalação ASDF"
+# echo "================================================================"
+# git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+# echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
+
+# asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+# asdf install nodejs latest
+# asdf global nodejs latest
+
+# echo "Instalação syntax-highlighting"
+# echo "================================================================"
+# git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
+
+# #Descomente a linha abaixo
+# echo "source ${(q-)PWD}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME} /.zshrc
+
+# echo "Instalação zsh-autosuggestions"
+# echo "================================================================"
+# git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
+# source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+# clear
+
+# echo "Instalação fzf"
+# echo "================================================================"
+# git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
 
 echo "Finalização, atualização e limpeza"
 echo "================================================================"
